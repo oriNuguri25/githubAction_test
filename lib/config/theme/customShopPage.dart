@@ -1,5 +1,7 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:my_project/core/utils/CartList.dart';
 
 import '../../core/utils/CustomBtmSheet.dart';
 import '../../main.dart';
@@ -83,7 +85,50 @@ class _CustomShopPageState extends State<CustomShopPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        actions: [
+          Consumer(
+            builder: (context, ref, child) {
+              final itemCount = ref.watch(cartListProvider).length;
+              return Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  IconButton(
+                    onPressed: () {},
+                    icon: const Icon(Icons.shopping_cart_outlined),
+                  ),
+                  if (itemCount > 0)
+                    Positioned(
+                      right: 11,
+                      top: 11,
+                      child: Container(
+                        padding: const EdgeInsets.all(2),
+                        decoration: BoxDecoration(
+                          color: Colors.red,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        constraints: const BoxConstraints(
+                          minWidth: 16,
+                          minHeight: 16,
+                        ),
+                        child: Center(
+                          child: Text(
+                            '$itemCount',
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 10,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      ),
+                    )
+                ],
+              );
+            },
+          ),
+        ],
+      ),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -137,7 +182,7 @@ class _CustomShopPageState extends State<CustomShopPage> {
               itemCount: widget.cafeMenu.length,
               itemBuilder: (context, index) {
                 return GestureDetector(
-                  onTap: (){
+                  onTap: () {
                     CustomBtmSheet(context, widget.cafeMenu[index]);
                   },
                   child: Container(
@@ -155,7 +200,7 @@ class _CustomShopPageState extends State<CustomShopPage> {
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                             const SizedBox(
+                            const SizedBox(
                               height: 5,
                             ),
                             Text(

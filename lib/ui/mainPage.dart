@@ -54,7 +54,7 @@ class mainPage extends StatelessWidget {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => CartPage(CartList: CartList,)),
+                  MaterialPageRoute(builder: (context) => const CartPage()),
                 );
               },
               child: const Text(

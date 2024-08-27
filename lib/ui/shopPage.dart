@@ -17,6 +17,12 @@ class shopPage extends ConsumerWidget {
       child: Scaffold(
         appBar: AppBar(
           title: const Text('Shop'),
+          actions: [
+            IconButton(
+              onPressed: () {},
+              icon: const Icon(Icons.shopping_cart_outlined),
+            )
+          ],
           bottom: PreferredSize(
             preferredSize: const Size.fromHeight(48.0),
             child: TabBar(

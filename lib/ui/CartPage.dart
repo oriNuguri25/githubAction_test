@@ -1,27 +1,21 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:my_project/core/utils/CartList.dart';
 import 'package:my_project/ui/paymentPage.dart';
 
 import '../main.dart';
 
-class CartPage extends StatefulWidget {
-  final List<Map<String, String>> CartList;
-
-  const CartPage({super.key, required this.CartList});
+class CartPage extends ConsumerWidget {
+  const CartPage({super.key});
 
   @override
-  State<CartPage> createState() => _CartPageState();
-}
-
-class _CartPageState extends State<CartPage> {
-  @override
-  Widget build(BuildContext context) {
-    int totalQuantity = widget.CartList.fold(0, (sum, item) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final cartList = ref.watch(cartListProvider);
+    final totalQuantity = cartList.fold(0, (sum, item) {
       return sum + int.parse(item['quantity'] ?? '0');
     });
 
-    int totalPrice = widget.CartList.fold(0, (sum, item) {
+    final totalPrice = cartList.fold(0, (sum, item) {
       return sum + int.parse(item['totalPrice'] ?? '0');
     });
 
@@ -54,11 +48,11 @@ class _CartPageState extends State<CartPage> {
             child: SizedBox(
               height: ratio.height * 300,
               child: ListView.builder(
-                itemCount: widget.CartList.length,
+                itemCount: cartList.length,
                 itemBuilder: (context, index) {
-                  String name = widget.CartList[index]['name'] ?? '이름 없음';
-                  String count = widget.CartList[index]['quantity'] ?? '0';
-                  String price = widget.CartList[index]['totalPrice'] ?? '0';
+                  String name = cartList[index]['name'] ?? '이름 없음';
+                  String count = cartList[index]['quantity'] ?? '0';
+                  String price = cartList[index]['totalPrice'] ?? '0';
 
                   return Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -68,9 +62,7 @@ class _CartPageState extends State<CartPage> {
                       Text(price),
                       IconButton(
                         onPressed: () {
-                          setState(() {
-                            widget.CartList.removeAt(index);
-                          });
+                          ref.read(cartListProvider.notifier).remove(index);
                         },
                         icon: const Icon(Icons.remove_circle_outline),
                       )
@@ -107,7 +99,7 @@ class _CartPageState extends State<CartPage> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => PaymentWidgetExample(totalPrice: totalPrice, CartList: CartList),
+                            builder: (context) => const PaymentWidgetExample(),
                           ),
                         );
                       },

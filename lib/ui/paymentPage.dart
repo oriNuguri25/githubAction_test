@@ -1,22 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:my_project/core/utils/CartList.dart';
 import 'package:tosspayments_widget_sdk_flutter/model/payment_info.dart';
 import 'package:tosspayments_widget_sdk_flutter/model/payment_widget_options.dart';
 import 'package:tosspayments_widget_sdk_flutter/payment_widget.dart';
 import 'package:tosspayments_widget_sdk_flutter/widgets/agreement.dart';
 import 'package:tosspayments_widget_sdk_flutter/widgets/payment_method.dart';
 
-class PaymentWidgetExample extends StatefulWidget {
-  final totalPrice;
-  final List<Map<String, String>> CartList;
-
-  const PaymentWidgetExample(
-      {super.key, required this.totalPrice, required this.CartList});
+class PaymentWidgetExample extends ConsumerStatefulWidget {
+  const PaymentWidgetExample({super.key});
 
   @override
-  State<PaymentWidgetExample> createState() => _PaymentWidgetExampleState();
+  ConsumerState<PaymentWidgetExample> createState() =>
+      _PaymentWidgetExampleState();
 }
 
-class _PaymentWidgetExampleState extends State<PaymentWidgetExample> {
+class _PaymentWidgetExampleState extends ConsumerState<PaymentWidgetExample> {
   late PaymentWidget _paymentWidget;
   PaymentMethodWidgetControl? _paymentMethodWidgetControl;
   AgreementWidgetControl? _agreementWidgetControl;
@@ -29,11 +28,11 @@ class _PaymentWidgetExampleState extends State<PaymentWidgetExample> {
       customerKey: "FuNvmqS_Az-7gaAepSKxx",
     );
 
+    final totalPrice = ref.read(cartListProvider.notifier).totalPrice;
     _paymentWidget
         .renderPaymentMethods(
       selector: 'methods',
-      amount: Amount(
-          value: widget.totalPrice, currency: Currency.KRW, country: "KR"),
+      amount: Amount(value: totalPrice, currency: Currency.KRW, country: "KR"),
       options: RenderPaymentMethodsOptions(variantKey: "DEFAULT"),
     )
         .then((control) {
@@ -43,6 +42,9 @@ class _PaymentWidgetExampleState extends State<PaymentWidgetExample> {
 
   @override
   Widget build(BuildContext context) {
+    final cartList = ref.watch(cartListProvider);
+    final totalPrice = ref.watch(cartListProvider.notifier).totalPrice;
+
     return Scaffold(
       appBar: AppBar(),
       body: SafeArea(
@@ -62,11 +64,11 @@ class _PaymentWidgetExampleState extends State<PaymentWidgetExample> {
                   ElevatedButton(
                     onPressed: () async {
                       String orderName = '';
-                      if (widget.CartList.length == 1) {
-                        orderName = widget.CartList[0]['name'] ?? '상품명 없음';
-                      } else if (widget.CartList.length > 1) {
-                        final firstItemName = widget.CartList[0]['name'] ?? '상품명 없음';
-                        final remainingItemCount = widget.CartList.length -1;
+                      if (cartList.length == 1) {
+                        orderName = cartList[0]['name'] ?? '상품명 없음';
+                      } else if (cartList.length > 1) {
+                        final firstItemName = cartList[0]['name'] ?? '상품명 없음';
+                        final remainingItemCount = cartList.length - 1;
                         orderName = '$firstItemName 외 $remainingItemCount개';
                       }
                       final paymentResult = await _paymentWidget.requestPayment(
