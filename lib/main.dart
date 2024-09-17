@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:my_project/ui/mainPage.dart';
+import 'package:my_project/ui/sign/signInPage.dart';
 
 late Size ratio;
 
@@ -28,7 +29,7 @@ class _MyAppState extends State<MyApp> {
     ratio = Size(MediaQuery.sizeOf(context).width / 412, MediaQuery.sizeOf(context).height / 892);
     return const MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: mainPage(),
+      home: SignInPage(),
     );
   }
 }
